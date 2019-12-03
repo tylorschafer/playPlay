@@ -6,8 +6,8 @@ var logger = require('morgan');
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 
-var indexRouter = require('./routes/index');
-var papersRouter = require('./routes/api/v1/papers');
+var indexRouter = require('.app/routes/index');
+var papersRouter = require('.app/routes/api/v1/papers');
 
 var app = express();
 
