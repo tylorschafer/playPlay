@@ -34,6 +34,19 @@ router.post('/', (request, response) => {
   })()
 })
 
+router.get('/:id', (request, response) => {
+  (async () => {
+    const id = request.params.id
+    const favorite = await database('favorites').where('id', parseInt(id)).then(result => result)
+
+    if (favorite) {
+      response.status(200).json(favorite)
+    } else {
+      response.status(404).json('Entry not found')
+    }
+  })()
+})
+
 router.get('/', (request, response) => {
   (async () => {
     const favorites = await database('favorites').then(result => result)
