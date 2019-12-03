@@ -11,6 +11,6 @@ const musix = new musixMatch('Queen', 'We Will Rock You')
 describe('Test the MusixMatch Service', () => {
  it ('Should return data from MusixMatch Service', async () => {
    const musicData = await musix.getData().then(response => response.json())
-   expect(musicData.message.body.track_list[0].track.track_id).toBe(30109723)
+   expect(musicData.message.body.track_list[0].track.artist_id).toBe(26759376)
  })
 });
