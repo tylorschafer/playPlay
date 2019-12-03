@@ -1,9 +1,9 @@
 const fetch = require('node-fetch')
 
 class MusixMatch {
-  constructor (artistName, trackName) {
-    this.artistName = artistName;
+  constructor (trackName, artistName) {
     this.trackName = trackName;
+    this.artistName = artistName;
   }
 
   getData () {
