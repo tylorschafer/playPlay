@@ -11,7 +11,7 @@ router.post('/', (request, response) => {
     const trackName = req.title
     const artistName = req.artistName
 
-    if (trackName && artistName){
+    if (trackName && artistName) {
       const musix = new musixmatch(trackName, artistName)
       const musicData = await musix.getData().then(response => response.json())
       const title = musicData.message.body.track_list[0].track.track_name
@@ -23,15 +23,26 @@ router.post('/', (request, response) => {
         .returning('id')
         .insert({ title: title, artistName: name, rating: rating, genre: genre })
         .then(favorite => {
-          database('favorites').where('id', parseInt(favorite)).then(result => {response.status(201).json(result)})
+          database('favorites').where('id', parseInt(favorite)).then(result => { response.status(201).json(result) })
         })
         .catch(error => {
           response.status(400).json({ error })
         })
-    }
-    else {
+    } else {
       response.status(400).json({ error: 'Bad request' })
     }
   })()
 })
-module.exports = router;
+
+router.get('/', (request, response) => {
+  (async () => {
+    const favorites = await database('favorites').then(result => result)
+    if (favorites) {
+      response.status(200).json(favorites)
+    } else {
+      response.status(404).json('No favorites in database')
+    }
+  })()
+})
+
+module.exports = router
