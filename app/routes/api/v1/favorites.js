@@ -24,8 +24,10 @@ router.post('/', (request, response) => {
           .insert(favoriteData)
           .then(result => { response.status(201).json(result) })
           .catch(error => { response.status(400).json({ error }) })
-      } else { response.status(500).json({ error: 'Record already exists'})}
-    } else { response.status(400).json({ error: 'Bad request' }) }
+      } else { response.status(500).json({ error: 'Record already exists' }) }
+    } else { 
+      response.status(400).json({ error: 'Bad request' }) 
+    }
   })()
 })
 
