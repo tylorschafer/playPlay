@@ -4,7 +4,7 @@ const router = express.Router()
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../../../../knexfile')[environment]
 const database = require('knex')(configuration)
-const Formatter = require('../../../formatters/musixFormatter')
+const Favorite = require('../../../models/favorite')
 
 router.post('/', (request, response) => {
   (async () => {
@@ -14,17 +14,18 @@ router.post('/', (request, response) => {
     if (trackName && artistName) {
       const musix = new musixmatch(trackName, artistName)
       const musicData = await musix.getData().then(response => response.json())
-      const musixFormatter = new Formatter(musicData)
-      const formatData = musixFormatter.returnData()
+      const favorite = new Favorite(musicData)
+      const favoriteData = favorite.returnFavorite()
+      const favoriteCheck = favorite.favoriteCheck(trackName, artistName)
 
-      database('favorites')
-        .returning(['id', 'title', 'artistName', 'rating', 'genre'])
-        .insert(formatData)
-        .then(result => { response.status(201).json(result) })
-        .catch(error => { response.status(400).json({ error }) })
-    } else {
-      response.status(400).json({ error: 'Bad request' })
-    }
+      if (favoriteCheck === false) {
+        database('favorites')
+          .returning(['id', 'title', 'artistName', 'rating', 'genre'])
+          .insert(favoriteData)
+          .then(result => { response.status(201).json(result) })
+          .catch(error => { response.status(400).json({ error }) })
+      } else { response.status(500).json({ error: 'Record already exists'})}
+    } else { response.status(400).json({ error: 'Bad request' }) }
   })()
 })
 
