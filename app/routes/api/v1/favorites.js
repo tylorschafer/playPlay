@@ -4,30 +4,24 @@ const router = express.Router()
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../../../../knexfile')[environment]
 const database = require('knex')(configuration)
+const Formatter = require('../../../formatters/musixFormatter')
 
 router.post('/', (request, response) => {
   (async () => {
-    const req = request.body
-    const trackName = req.title
-    const artistName = req.artistName
+    const trackName = request.body.title
+    const artistName = request.body.artistName
 
     if (trackName && artistName) {
       const musix = new musixmatch(trackName, artistName)
       const musicData = await musix.getData().then(response => response.json())
-      const title = musicData.message.body.track_list[0].track.track_name
-      const name = musicData.message.body.track_list[0].track.artist_name
-      const rating = musicData.message.body.track_list[0].track.track_rating
-      const genre = musicData.message.body.track_list[0].track.primary_genres.music_genre_list[0].music_genre.music_genre_name || 'undefined'
+      const musixFormatter = new Formatter(musicData)
+      const formatData = musixFormatter.returnData()
 
       database('favorites')
-        .returning('id')
-        .insert({ title: title, artistName: name, rating: rating, genre: genre })
-        .then(favorite => {
-          database('favorites').where('id', parseInt(favorite)).then(result => { response.status(201).json(result) })
-        })
-        .catch(error => {
-          response.status(400).json({ error })
-        })
+        .returning(['id', 'title', 'artistName', 'rating', 'genre'])
+        .insert(formatData)
+        .then(result => { response.status(201).json(result) })
+        .catch(error => { response.status(400).json({ error }) })
     } else {
       response.status(400).json({ error: 'Bad request' })
     }
