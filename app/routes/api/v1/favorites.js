@@ -58,4 +58,17 @@ router.get('/', (request, response) => {
   })()
 })
 
+router.delete('/:id', (request, response) => {
+  (async () => {
+    const id = request.params.id
+    const delFavorite = await database('favorites').where('id', parseInt(id)).del()
+
+    if (delFavorite) {
+      response.status(204).json('Favorite successfully removed')
+    } else {
+      response.status(404).json('Entry not found')
+    }
+  })()
+})
+
 module.exports = router

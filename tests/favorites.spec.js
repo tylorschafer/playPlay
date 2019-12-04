@@ -29,4 +29,22 @@ describe('Get Favorites', () => {
     expect(res.body[0].artistName).toBe('Queen')
     expect(res.body[0].genre).toBe('Rock')
   })
+
+  it('Gets a single favorite by id', async () => {
+    const res = await request(app)
+      .get('/api/v1/favorites/2')
+
+    expect(res.body[0].title).toBe('We Will Rock You')
+    expect(res.body[0].artistName).toBe('Queen')
+    expect(res.body[0].genre).toBe('Rock')
+  })
+})
+
+describe('Delete Favorites', () => {
+  it('Deletes a single favorite by id', async () => {
+    const res = await request(app)
+      .delete('/api/v1/favorites/1')
+
+    expect(res.body).toBe('Entry not found')
+  })
 })
