@@ -21,7 +21,7 @@ describe('Test favorites endpoints', () => {
         .send({ title: 'Daughters', artistName: 'John Mayer' })
       expect(res.body[0].title).toBe('Daughters')
       expect(res.body[0].artistName).toBe('John Mayer')
-      expect(res.body[0].genre).toBe('Rock')
+      expect(res.body[0].genre).toBe('Blues-Rock')
     })
   })
 
