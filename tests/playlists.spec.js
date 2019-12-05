@@ -17,7 +17,7 @@ describe('Test Playlist Endpoints', () => {
     describe('Post Playlist', () => {
         it('Creates a new playlist', async () => {
             const res = await request(app)
-            .post('api/v1/playlists')
+            .post('/api/v1/playlists')
             .send({ title: 'Working Out'})
         expect(res.body[0].id).toBe(1)
         expect(res.body[0].title).toBe('Working Out')
