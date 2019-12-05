@@ -3,7 +3,7 @@ exports.up = function(knex) {
   return Promise.all([
     knex.schema.createTable('playlists', function(table) {
       table.increments('id').primary()
-      table.string('title').unique()
+      table.string('title').unique().notNullable()
 
       table.timestamps(true, true)
     })
