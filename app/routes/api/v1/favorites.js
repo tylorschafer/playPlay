@@ -16,7 +16,7 @@ router.post('/', (request, response) => {
       const musicData = await musix.getData().then(response => response.json())
       const favorite = new Favorite(musicData)
       const favoriteData = favorite.returnFavorite()
-      const favoriteCheck = favorite.favoriteCheck(trackName, artistName)
+      const favoriteCheck = await favorite.favoriteCheck(trackName, artistName).then(result => result)
 
       if (favoriteCheck === false) {
         database('favorites')
