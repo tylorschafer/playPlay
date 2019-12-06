@@ -23,4 +23,18 @@ describe('Test Playlist Endpoints', () => {
       expect(res.body[0].title).toBe('Working Out')
     })
   })
+
+  describe('Put Playlist', () => {
+    it('Replaces a playlist', async () => {
+      const oldPlaylist = await database('playlists')
+        .returning(['id', 'title'])
+        .insert({ title: 'Wild Wild West' })
+        .then(result => result)
+      const res = await request(app)
+        .put('/api/v1/playlists')
+        .send({title: 'Different Playlist Name'})
+      expect(res.body[0].id).toBe(oldPlaylist.id)
+      expect(res.body[0].title).toBe('Different Playlist Name')
+    })
+  })
 })
