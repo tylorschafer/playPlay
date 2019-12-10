@@ -18,7 +18,7 @@ router.put('/:id', async (request, response) => {
   const id = request.params.id
 
   database('playlists')
-    .returning(['id', 'title', 'created_at', 'updated_at'])
+    .returning('*')
     .where('id', id)
     .update({ title: newTitle })
     .then(result => { response.status(200).json(result) })
@@ -42,6 +42,22 @@ router.delete('/:id', async (request, response) => {
   } else {
     response.status(404).json('Entry not found')
   }
+})
+
+router.post('/:playlistId/favorites/:favoriteId', async (request, response) => {
+    const fav = await database('favorites')
+                        .returning('*')
+                        .where('id', request.params.favoriteId)
+                        .then(result => result[0])
+    const play = await database('playlists')
+                        .returning('*')
+                        .where('id', request.params.playlistId)
+                        .then(result => result[0])
+
+    database('playlist_favorites')
+        .insert({ playlist_id: play.id, favorite_id: fav.id })
+        .then(result => response.status(201).json({ 'success': `${fav.title} has been added to ${play.title}!`}))
+        .catch(error => { response.status(400).json({ error }) })
 })
 
 module.exports = router

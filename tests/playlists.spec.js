@@ -40,17 +40,17 @@ describe('Test Playlist Endpoints', () => {
 
   describe('Get Playlist', () => {
     it('Gets a list of all playlists', async () => {
-    const playlist1 = { title: 'Working Out' }
-    const playlist2 = { title: 'Driving' }
-    const db1 = await database('playlists').returning(['id', 'title']).insert(playlist1).then(result => result)
-    const db2 = await database('playlists').returning(['id', 'title']).insert(playlist2).then(result => result)
-    const res = await request(app)
-    .get('/api/v1/playlists')
+        const playlist1 = { title: 'Working Out' }
+        const playlist2 = { title: 'Driving' }
+        const db1 = await database('playlists').returning(['id', 'title']).insert(playlist1).then(result => result)
+        const db2 = await database('playlists').returning(['id', 'title']).insert(playlist2).then(result => result)
+        const res = await request(app)
+            .get('/api/v1/playlists')
 
-    expect(res.body[0].title).toBe('Working Out')
-    expect(res.body[0].id).toBe(db1[0].id)
-    expect(res.body[1].title).toBe('Driving')
-    expect(res.body[1].id).toBe(db2[0].id)
+        expect(res.body[0].title).toBe('Working Out')
+        expect(res.body[0].id).toBe(db1[0].id)
+        expect(res.body[1].title).toBe('Driving')
+        expect(res.body[1].id).toBe(db2[0].id)
 
     })
   })
