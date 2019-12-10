@@ -8,7 +8,7 @@ const database = require('knex')(configuration)
 
 describe('Test Playlist Endpoints', () => {
     beforeEach(async () => {
-        await database.raw('truncate table playlists_favorites cascade')
+        await database.raw('truncate table playlist_favorites cascade')
     })
     afterEach(() => {
         database.raw('truncate table playlist_favorites cascade')
@@ -20,10 +20,11 @@ describe('Test Playlist Endpoints', () => {
             const favorite = await database('favorites').insert({ title: 'Tiny Dancer', artistName: 'Elton John', rating: 99, genre: 'Classic Pop'})
                                                         .returning(['id', 'title'])
                                                         .then(result => result[0])
+  
             const res = await request(app)
-                .post(`/api/v1/playlists/${playlist.id}/favorites/${favorites.id}`)  
-            
-            expect(res.body[0].success).toBe(`${favorite.title} has been added to ${playlist.title}!`)
+                .post(`/api/v1/playlists/${playlist.id}/favorites/${favorite.id}`)  
+
+            expect(res.body.success).toBe(`${favorite.title} has been added to ${playlist.title}!`)
         }) 
     })
 })
