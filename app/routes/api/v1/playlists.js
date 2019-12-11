@@ -29,7 +29,8 @@ router.put('/:id', async (request, response) => {
 router.get('/', async (request, response) => {
   const playlists = await database('playlists').then(result => result)
   if (playlists) {
-    response.status(200).json(playlists)
+
+    // response.status(200).json(playlists)
   } else {
     response.status(404).json('No playlists in database')
   }
@@ -76,21 +77,11 @@ router.delete('/:playlistId/favorites/:favoriteId', async (request, response) =>
 
 router.get('/:id/favorites', async (request, response) => {
   const playM = new PlayModel(request.params.id)
-  const playCount = await playM.songCount()
-  const avgRating = await playM.averageRating()
-  const averageRating = parseFloat((parseFloat(avgRating[0].avg)).toFixed(2))
   const playlist = await database('playlists')
     .where('id', request.params.id)
     .then(result => result[0])
     .catch(error => error)
-  const favorites = await database('playlist_favorites AS p')
-    .innerJoin('favorites as f', 'p.favorite_id', 'f.id')
-    .select(['f.id', 'f.title', 'f.artistName', 'f.genre', 'f.rating'])
-    .where('p.playlist_id', request.params.id)
-    .then(result => result)
-    .catch(error => error)
-
-  const result = await playM.formatFavorites(playCount, averageRating, playlist, favorites)
+  const result = await playM.formatFavorites(playlist)
   return response.status(200).json(result)
 })
 

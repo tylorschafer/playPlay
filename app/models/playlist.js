@@ -25,17 +25,30 @@ class Playlist {
     return playFavs
   }
 
-  formatFavorites (pc, ar, playlist, favorites) {
+  async formatFavorites (playlist) {
+    const rating = await this.averageRating()
+    const count = await this.songCount()
+    const favs = await this.favorites() 
     const output = {}
-    output.id = playlist.id
-    output.title = playlist.title 
-    output.songCount = pc
-    output.songAvgRating = ar
-    output.favorites = favorites
-    output.createdAt = playlist.created_at 
-    output.updatedAt = playlist.updated_at 
+      output.id = playlist.id
+      output.title = playlist.title 
+      output.songCount = count
+      output.songAvgRating = parseFloat((parseFloat(rating[0].avg)).toFixed(2))
+      output.favorites = favs
+      output.createdAt = playlist.created_at 
+      output.updatedAt = playlist.updated_at 
     return output
   };
+
+  async favorites () {
+    const result = await database('playlist_favorites AS p')
+      .innerJoin('favorites as f', 'p.favorite_id', 'f.id')
+      .select(['f.id', 'f.title', 'f.artistName', 'f.genre', 'f.rating'])
+      .where('p.playlist_id', this.id)
+      .then(result => result)
+      .catch(error => error)
+    return result
+  }
 }
 
 module.exports = Playlist
