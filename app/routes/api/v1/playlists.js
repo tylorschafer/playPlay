@@ -45,19 +45,19 @@ router.delete('/:id', async (request, response) => {
 })
 
 router.post('/:playlistId/favorites/:favoriteId', async (request, response) => {
-    const fav = await database('favorites')
-                        .returning('*')
-                        .where('id', request.params.favoriteId)
-                        .then(result => result[0])
-    const play = await database('playlists')
-                        .returning('*')
-                        .where('id', request.params.playlistId)
-                        .then(result => result[0])
+  const fav = await database('favorites')
+    .returning('*')
+    .where('id', request.params.favoriteId)
+    .then(result => result[0])
+  const play = await database('playlists')
+    .returning('*')
+    .where('id', request.params.playlistId)
+    .then(result => result[0])
 
-    database('playlist_favorites')
-        .insert({ playlist_id: play.id, favorite_id: fav.id })
-        .then(result => response.status(201).json({ 'success': `${fav.title} has been added to ${play.title}!`}))
-        .catch(error => { response.status(400).json({ error }) })
+  database('playlist_favorites')
+    .insert({ playlist_id: play.id, favorite_id: fav.id })
+    .then(result => response.status(201).json({ success: `${fav.title} has been added to ${play.title}!` }))
+    .catch(error => { response.status(400).json({ error }) })
 })
 
 module.exports = router
