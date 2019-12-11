@@ -3,6 +3,7 @@ const router = express.Router()
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../../../../knexfile')[environment]
 const database = require('knex')(configuration)
+const PlayModel = require('../../../models/playlist')
 
 router.post('/', async (request, response) => {
   const title = request.body.title
@@ -71,6 +72,26 @@ router.delete('/:playlistId/favorites/:favoriteId', async (request, response) =>
   } else {
     response.status(404).json('Entry not found')
   }
+})
+
+router.get('/:id/favorites', async (request, response) => {
+  const playM = new PlayModel(request.params.id)
+  const playCount = await playM.songCount()
+  const avgRating = await playM.averageRating()
+  const averageRating = parseFloat((parseFloat(avgRating[0].avg)).toFixed(2))
+  const playlist = await database('playlists')
+    .where('id', request.params.id)
+    .then(result => result[0])
+    .catch(error => error)
+  const favorites = await database('playlist_favorites AS p')
+    .innerJoin('favorites as f', 'p.favorite_id', 'f.id')
+    .select(['f.id', 'f.title', 'f.artistName', 'f.genre', 'f.rating'])
+    .where('p.playlist_id', request.params.id)
+    .then(result => result)
+    .catch(error => error)
+
+  const result = await playM.formatFavorites(playCount, averageRating, playlist, favorites)
+  return response.status(200).json(result)
 })
 
 module.exports = router
