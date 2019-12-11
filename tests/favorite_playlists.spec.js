@@ -9,9 +9,13 @@ const database = require('knex')(configuration)
 describe('Test Playlist Endpoints', () => {
   beforeEach(async () => {
     await database.raw('truncate table playlist_favorites cascade')
+    await database.raw('truncate table favorites cascade')
+    await database.raw('truncate table playlists cascade')
   })
   afterEach(() => {
     database.raw('truncate table playlist_favorites cascade')
+    database.raw('truncate table favorites cascade')
+    database.raw('truncate table playlists cascade')
   })
 
   describe('Post Favorite to Playlist', () => {
@@ -40,11 +44,13 @@ describe('Test Playlist Endpoints', () => {
         .then(result => result[0])
       const playFav = await database('playlist_favorites')
         .insert({ favorite_id: favorite.id, playlist_id: playlist.id })
-        .then(result => result[0])   
+        .returning(['id'])
+        .then(result => result[0])
+
       const res = await request(app)
         .delete(`/api/v1/playlists/${playlist.id}/favorites/${favorite.id}`)
 
-      expect(res.statusCode).toBe(201)
+      expect(res.statusCode).toBe(204)
     })
   })
 })

@@ -60,4 +60,17 @@ router.post('/:playlistId/favorites/:favoriteId', async (request, response) => {
     .catch(error => { response.status(400).json({ error }) })
 })
 
+router.delete('/:playlistId/favorites/:favoriteId', async (request, response) => {
+  const playFav = await database('playlist_favorites')
+    .returning('id')
+    .where({ favorite_id: parseInt(request.params.favoriteId), playlist_id: parseInt(request.params.playlistId) })
+    .del()
+
+  if (playFav) {
+    response.status(204).json('Favorite successfully removed from playlist')
+  } else {
+    response.status(404).json('Entry not found')
+  }
+})
+
 module.exports = router
