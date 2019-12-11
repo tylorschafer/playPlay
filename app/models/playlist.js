@@ -33,13 +33,12 @@ class Playlist {
       output.id = playlist.id
       output.title = playlist.title 
       output.songCount = count
-      output.songAvgRating = parseFloat((parseFloat(rating[0].avg)).toFixed(2))
+      output.songAvgRating = parseFloat((parseFloat(rating[0].avg)).toFixed(2)) || 0
       output.favorites = favs
       output.createdAt = playlist.created_at 
       output.updatedAt = playlist.updated_at 
     return output
   };
-
   async favorites () {
     const result = await database('playlist_favorites AS p')
       .innerJoin('favorites as f', 'p.favorite_id', 'f.id')

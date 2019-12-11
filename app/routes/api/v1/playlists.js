@@ -28,13 +28,24 @@ router.put('/:id', async (request, response) => {
 
 router.get('/', async (request, response) => {
   const playlists = await database('playlists').then(result => result)
+  const result = []
   if (playlists) {
-
-    // response.status(200).json(playlists)
+      await asyncForEach(playlists, async (playlist) => {
+          const playM = new PlayModel(playlist.id)
+          const newResult = await playM.formatFavorites(playlist)
+          result.push(newResult)
+      })
+    response.status(200).json(result)
   } else {
     response.status(404).json('No playlists in database')
   }
 })
+
+async function asyncForEach (array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array)
+    }
+}
 
 router.delete('/:id', async (request, response) => {
   const id = request.params.id
