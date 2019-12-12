@@ -1,74 +1,273 @@
-# All your Express base are belong to us
+## playPlay
 
-[![Build Status](https://travis-ci.com/turingschool-examples/all-your-base.svg?branch=master)](https://travis-ci.com/turingschool-examples/all-your-base)
+playPlay is a node.js Express REST API that allows users to create playlists and favorites with full CRUD functionality. Favorite song information is found using the musicMatch API. Users can add favorites to playlists and can hit endpoints that will return the nested summary of resources for a single or all playlists.
 
-## Getting started
-To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
+## Contributors
 
-#### Installing necessary dependencies
-The easiest way to get started is to run the following command. This will pull down any necessary dependencies that your app will require. You can think of this command as something incredibly similar to `bundle install` in Rails. 
+Express Sweater Weather was written by Andrew Johnson and Tylor Schafer as a school project at Turing School of Software and design.
 
-`npm install`
+## Local Setup
 
-#### Set up your local database
-You’ll need to figure out a name for your database. We suggest calling it something like `sweater_weather_dev`.  
+1. Fork and Clone down this repo
+1. Install all dependencies by navigating to the root project directory in terminal and running `npm install`.
+1. Enter `psql` mode and run `CREATE DATABASE play_play_dev;` and `CREATE DATABASE play_play_test`to create the PostgreSQL databases.
+1. Run the table migrations with `knex migrate:latest` and `knex migrate:lastest --env test`
 
-To get things set up, you’ll need to access your Postgres instance by typing in `psql` into your terminal. Once there, you can create your database by running the comment `CREATE DATABASE PUT_DATABASE_NAME_HERE_dev;`. 
+## Heroku Production Link
+  * You can access the production endpoints of this application at https://play-play-master.herokuapp.com/
 
-Now you have a database for your new project.
+## Database Schema
+![DBSchema](/bin/schema.png?raw=true "Optional Title")
 
-#### Migrations
-Once you have your database setup, you’ll need to run some migrations (if you have any). You can do this by running the following command: 
+## Tech Stack
+* playPlay is a node.js application built with the Express framework
+* Knex query builder
+* PostgreSQL database
+* Heroku production host
 
-`knex migrate:latest`
+## **Endpoints**
 
+**1.** `POST /api/v1/favorites`
+   * Summary: The Post Favorite endpoint creates a new favorite in the database and returns the newly created resource. Must supply
+   all required json body parameters. Invalid requests will receive a 404 error.
 
-Instructions to create database, run migrations, and seed: 
-```
-psql
-CREATE DATABASE DATABASE_NAME_dev;
-\q
+   * Headers:
+   ``` Content-Type: application/json
+       Accept: application/json
+   ```
+   * Required Request Body:
+   ```
+   body:
 
-knex migrate:latest
-knex seed:run
-```
+   {
+     "title": "<SONG_TITLE>",
+     "artistName": "<ARTIST_NAME>"
+   }
+   ```
+   * Expected Response:
+   ```
+   {
+    "id": 1,
+    "title": "We Will Rock You",
+    "artistName": "Queen"
+    "genre": "Rock",
+    "rating": 88
+  }
+   ```
 
-#### Set up your test database
-Most of the setup is going to be same as the one you did before. You’ll notice one small difference with setting the environment flag to `test`.  
+**2.** `GET /api/v1/favorites/:id`
+   * Summary: The Get Favorite endpoint returns a favorite from the database. Must supply
+   valid resource id in path parameter. Invalid requests will receive a 404 not found response.
 
-```
-psql
-CREATE DATABASE DATABASE_NAME_test;
-\q
+   * Headers:
+   ``` Content-Type: application/json
+       Accept: application/json
+   ```
 
-knex migrate:latest --env test
-```
+   * Expected Response:
+   ```
+   {
+    "id": 1,
+    "title": "We Will Rock You",
+    "artistName": "Queen"
+    "genre": "Rock",
+    "rating": 88
+  }
+   ```
 
-## Running your tests
-Running tests are simple and require you to run the following command below: 
+**3.** `GET /api/v1/favorites/`
+   * Summary: The Get Favorites endpoint returns all favorites from the database.
 
-`npm test`
+   * Headers:
+   ``` Content-Type: application/json
+       Accept: application/json
+   ```
 
-When the tests have completed, you’ll get a read out of how things panned out. The tests will be a bit more noisy than what you’re used to, so be prepared. 
+   * Expected Response:
+   ```
+    [
+      {
+        "id": 1,
+        "title": "We Will Rock You",
+        "artistName": "Queen"
+        "genre": "Rock",
+        "rating": 88
+      },
+      {
+        "id": 2,
+        "title": "Careless Whisper",
+        "artistName": "George Michael"
+        "genre": "Pop",
+        "rating": 93
+      },
+    ]
+   ```
 
-## Setting up your production environment
-This repo comes with a lot of things prepared for you. This includes production ready configuration. To get started, you’ll need to do a few things. 
+**4.** `DELETE /api/v1/favorites/:id`
+   * Summary: The Delete Favorite endpoint deletes a favorite resource from the database. Must supply
+   valid resource id in path parameter. Invalid requests will receive a 404 not found response.
 
-- Start a brand new app on the Heroku dashboard 
-- Add a Postgres instance to your new Heroku app
-- Find the URL of that same Postgres instance and copy it. It should look like a long url. It may look something like like `postgres://sdflkjsdflksdf:9d3367042c8739f3...`.
-- Update your `knexfile.js` file to use your Heroku database instance. You’ll see a key of `connection` with a value of an empty string. This is where you’ll paste your new Postgres instance URL. 
+   * Headers:
+   ``` Content-Type: application/json
+       Accept: application/json
+   ```
 
-Once you’ve set all of that up, you’ll need to `add the remote` to your new app. This should work no differently than how you’ve done it with any Rails project. Adding this remote will allow you to run `git push heroku master`. 
+   * Expected Response:
+   ```
+    statusCode: 204
+   ```
 
-Once you’ve done that, you’ll need to `bash` into your Heroku instance and get some things set up. 
+ **5.** `POST /api/v1/playlists`
+    * Summary: The Post Playlist endpoint creates a new playlist in the database. Must supply
+    all required json body parameters. Invalid requests will receive a 400 error.
 
-- Run the following commands to get started:
-```
-heroku run bash
-npm install
-nom install -g knex
-knex migrate:latest
-```
+    * Headers:
+    ``` Content-Type: application/json
+        Accept: application/json
+    ```
+    * Required Request Body:
+    ```
+    body:
 
-This will install any dependencies, install Knex, and migrate any changes that you’ve made to the database. 
+    {
+      "title": "<PLAYLIST_TITLE>",
+    }
+    ```
+    * Expected Response:
+    ```
+    statusCode: 201
+    ```
+ **6.** `PUT /api/v1/playlists/:id`
+    * Summary: The Put Playlist endpoint allows a user to change an existing playlist title. The resource is returned with the new title. Must supply
+    a valid resource id in path parameters. Invalid requests will receive a 404 error.
+
+    * Headers:
+    ``` Content-Type: application/json
+        Accept: application/json
+    ```
+    * Required Request Body:
+
+    * Expected Response:
+    ```
+    {
+      "id": 2,
+      "title": "Marathon Running Mix",
+      "createdAt": 2019-11-26T16:03:43+00:00,
+      "updatedAt": 2019-11-26T16:03:43+00:00
+    }
+    ```
+
+  **7.** `DELETE /api/v1/playlists/:id`
+     * Summary: The Delete Playlist endpoint deletes a playlist resource from the database. Must supply
+     valid resource id in path parameter. Invalid requests will receive a 404 not found response.
+
+     * Headers:
+     ``` Content-Type: application/json
+         Accept: application/json
+     ```
+
+     * Expected Response:
+     ```
+      statusCode: 204
+     ```
+  **8.** `GET /api/v1/playlists/`
+    * Summary: The Get Playlists endpoint returns all playlists from the database.
+
+    * Headers:
+    ``` Content-Type: application/json
+        Accept: application/json
+    ```
+
+    * Expected Response:
+    ```
+    [
+      {
+      "id": 1,
+      "title": "Cleaning House",
+      "songCount": 2,
+      "songAvgRating": 27.5,
+      "favorites": [
+          {
+          "id": 1,
+          "title": "We Will Rock You",
+          "artistName": "Queen"
+          "genre": "Rock",
+          "rating": 25
+          },
+          {
+          "id": 4,
+          "title": "Back In Black",
+          "artistName": "AC/DC"
+          "genre": "Rock",
+          "rating": 30
+          }
+      ],
+      "createdAt": 2019-11-26T16:03:43+00:00,
+      "updatedAt": 2019-11-26T16:03:43+00:00
+      }
+    ]
+    ...
+    ```
+
+  **9.** `POST /api/v1/playlists/:playlist_id/favorites/:favorite_id`
+     * Summary: The Post Playlist Favorite endpoint adds an existing favorite to an existing playlist. Must supply
+     valid resource ids in path parameters. Invalid requests will receive a 400 error.
+
+     * Headers:
+     ``` Content-Type: application/json
+         Accept: application/json
+     ```
+
+     * Expected Response:
+     ```
+     statusCode: 201
+     ```
+
+  **10.** `GET /api/v1/playlists/:id/favorites`
+    * Summary: The Get Playlist Favorites endpoint returns all favorites associated with the given playlist. Must supply a valid resource id in path parameter. Invalid requests will receive a 400 error.
+
+    * Headers:
+    ``` Content-Type: application/json
+        Accept: application/json
+    ```
+
+    * Expected Response:
+    ```
+    {
+      "id": 1,
+      "title": "Cleaning House",
+      "songCount": 2,
+      "songAvgRating": 27.5,
+      "favorites" : [
+                      {
+                      "id": 1,
+                      "title": "We Will Rock You",
+                      "artistName": "Queen"
+                      "genre": "Rock",
+                      "rating": 25
+                      },
+                      {
+                      "id": 4,
+                      "title": "Back In Black",
+                      "artistName": "AC/DC"
+                      "genre": "Rock",
+                      "rating": 30
+                      }
+                    ],
+      "createdAt": 2019-11-26T16:03:43+00:00,
+      "updatedAt": 2019-11-26T16:03:43+00:00
+    }
+    ```
+    **11.** `DELETE /api/v1/playlists/:playlist_id/favorites/:favorite_id`
+       * Summary: The Delete Playlist Favorite endpoint deletes an existing favorite from a playlist. Must supply
+       valid resource ids in path parameters. Invalid requests will receive a 404 not found response.
+
+       * Headers:
+       ``` Content-Type: application/json
+           Accept: application/json
+       ```
+
+       * Expected Response:
+       ```
+        statusCode: 204
+       ```
