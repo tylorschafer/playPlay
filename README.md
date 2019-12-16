@@ -4,7 +4,7 @@ playPlay is a node.js Express REST API that allows users to create playlists and
 
 ## Contributors
 
-Express Sweater Weather was written by Andrew Johnson and Tylor Schafer as a school project at Turing School of Software and design.
+playPlay was written by Andrew Johnson and Tylor Schafer as a school project at Turing School of Software and design.
 
 ## Local Setup
 
