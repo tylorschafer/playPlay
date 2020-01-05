@@ -258,16 +258,16 @@ playPlay was written by Andrew Johnson and Tylor Schafer as a school project at 
       "updatedAt": 2019-11-26T16:03:43+00:00
     }
     ```
-    **11.** `DELETE /api/v1/playlists/:playlist_id/favorites/:favorite_id`
+   **11.** `DELETE /api/v1/playlists/:playlist_id/favorites/:favorite_id`
        * Summary: The Delete Playlist Favorite endpoint deletes an existing favorite from a playlist. Must supply
        valid resource ids in path parameters. Invalid requests will receive a 404 not found response.
 
-       * Headers:
+   * Headers:
        ``` Content-Type: application/json
            Accept: application/json
        ```
 
-       * Expected Response:
+   * Expected Response:
        ```
         statusCode: 204
        ```
